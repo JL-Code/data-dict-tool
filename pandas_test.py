@@ -42,7 +42,7 @@ if __name__ == '__main__':
     df3 = pd.DataFrame(list_dict_data)
     df4 = pd.DataFrame(list_dict_data1)
 
-    print(df1)
-    print(df2)
-    print(df3)
-    print(df4)
+    # print(df1)
+    # print(df2)
+    # print(df3)
+    # print(df4)
