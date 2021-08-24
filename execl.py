@@ -5,25 +5,36 @@ import xlwings as xw
 if __name__ == '__main__':
 
     # 使用 json 库读取 json 文件
-    with open("./data/map.json") as json_file:
+    with open("./data/map.json", 'rb') as json_file:
         data = json.load(json_file)
 
     # 获取 xlwings 应用实例
     app = xw.App(visible=True, add_book=False)
-
+    # 下面代码实现了将df中的column列作为index
+    # df.set_index(["Column"], inplace=True)
     # 添加一个工作簿
     wb = app.books.add()
-    prev = ''
+
+    catalog_name = '目录'
+    prev = catalog_name
+    catalog = wb.sheets.add(catalog_name)
+
     for key in data:
         df = pd.DataFrame(data[key])
-        if prev == '':
-            curr_sheet = wb.sheets.add(key)
-        else:
-            curr_sheet = wb.sheets.add(key, after=prev)
+        df.set_index(["序号"], inplace=True)
+        # if prev == '':
+        #     curr_sheet = wb.sheets.add(key)
+        # else:
+        #     curr_sheet = wb.sheets.add(key, after=prev)
+        curr_sheet = wb.sheets.add(key, after=prev)
+
+        # curr_sheet.range('A1').add_hyperlink((catalog.index, "返回目录"))
         curr_sheet.range('A2').value = df
+        # sheet 工作表中所有列自动适应内容宽度
+        curr_sheet.autofit()
         prev = key
 
     # 保存 excel
-    wb.save("/Users/codeme/Library/Group Containers/UBF8T346G9.Office/数据字典.xlsx")
+    # wb.save("D:\\Workspace\\python-execl\\数据字典.xlsx")
 
-    app.quit()
+    # app.quit()
