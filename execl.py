@@ -18,6 +18,7 @@ if __name__ == '__main__':
     catalog_name = '目录'
     prev = catalog_name
     catalog = wb.sheets.add(catalog_name)
+    catalog_a1_address = catalog.range('A1').get_address()
 
     for key in data:
         df = pd.DataFrame(data[key])
@@ -28,7 +29,7 @@ if __name__ == '__main__':
         #     curr_sheet = wb.sheets.add(key, after=prev)
         curr_sheet = wb.sheets.add(key, after=prev)
 
-        # curr_sheet.range('A1').add_hyperlink((catalog.index, "返回目录"))
+        curr_sheet.range('A1').add_hyperlink(catalog_a1_address, text_to_display="返回目录", screen_tip=catalog_a1_address)
         curr_sheet.range('A2').value = df
         # sheet 工作表中所有列自动适应内容宽度
         curr_sheet.autofit()
