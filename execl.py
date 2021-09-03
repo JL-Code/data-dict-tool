@@ -2,6 +2,9 @@ import pandas as pd
 import json
 import xlwings as xw
 
+# https://blog.csdn.net/u014663232/article/details/106799735
+# Python3.9 解决 ImportError: No system module pywintypes (pywintypes39.dll) 的方法
+
 if __name__ == '__main__':
 
     # 使用 json 库读取 json 文件
