@@ -50,6 +50,7 @@ class UIMainWindow(object):
         # 添加信号 https://doc.qt.io/qt-5.15/qabstractbutton.html#clicked
         self.btnSave.clicked.connect(self.login)
 
+
     def login(self):
         username = self.editUserName.text()
         self.textBrowser.setText("登录成功！\n username:" + username + "")
