@@ -11,15 +11,30 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+class UIMainWindow(object):
+    def setup(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(230, 180, 72, 15))
+        self.btnSave = QtWidgets.QPushButton(self.centralwidget)
+        self.btnSave.setGeometry(QtCore.QRect(11, 510, 93, 28))
+        self.btnSave.setObjectName("btnSave")
+        self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
+        self.textBrowser.setGeometry(QtCore.QRect(280, 170, 256, 192))
+        self.textBrowser.setObjectName("textBrowser")
+        self.widget = QtWidgets.QWidget(self.centralwidget)
+        self.widget.setGeometry(QtCore.QRect(12, 12, 210, 26))
+        self.widget.setObjectName("widget")
+        self.formLayout = QtWidgets.QFormLayout(self.widget)
+        self.formLayout.setContentsMargins(0, 0, 0, 0)
+        self.formLayout.setObjectName("formLayout")
+        self.label = QtWidgets.QLabel(self.widget)
         self.label.setObjectName("label")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label)
+        self.editUserName = QtWidgets.QLineEdit(self.widget)
+        self.editUserName.setObjectName("editUserName")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.editUserName)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -29,10 +44,18 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
+        self.translate(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        # https://www.cnblogs.com/linyfeng/p/11223707.html
+        # 添加信号 https://doc.qt.io/qt-5.15/qabstractbutton.html#clicked
+        self.btnSave.clicked.connect(self.login)
 
-    def retranslateUi(self, MainWindow):
+    def login(self):
+        username = self.editUserName.text()
+        self.textBrowser.setText("登录成功！\n username:" + username + "")
+
+    def translate(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.btnSave.setText(_translate("MainWindow", "保存"))
         self.label.setText(_translate("MainWindow", "标题"))

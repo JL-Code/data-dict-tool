@@ -6,8 +6,8 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     mainW = QMainWindow()
-    ui = untitled.Ui_MainWindow()
-    ui.setupUi(mainW)
+    ui = untitled.UIMainWindow()
+    ui.setup(mainW)
 
     mainW.show()
 
