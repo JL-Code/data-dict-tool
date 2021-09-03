@@ -3,6 +3,8 @@ import pkg_resources
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.uic import loadUi
 
+# 参考：https://www.bilibili.com/video/BV1wZ4y1G7Ur?from=search&seid=10558608980613499134&spm_id_from=333.337.0.0
+# https://github.com/horychen/emachinery/tree/pypi-tut-video
 
 class CustomWidget(QMainWindow):
     def __init__(self):
