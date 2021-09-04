@@ -9,8 +9,12 @@ import xlwings as xw
 
 # 参考：https://www.bilibili.com/video/BV1wZ4y1G7Ur?from=search&seid=10558608980613499134&spm_id_from=333.337.0.0
 # https://github.com/horychen/emachinery/tree/pypi-tut-video
-# 打包命令1：pyinstaller -F -w --add-data "./view;./view"  .\main.py
-# 打包命令2：pyinstaller -D -w --add-data "./view;./view"  .\main.py
+# windows
+# 单文件打包：pyinstaller -F -w --add-data "./view;./view"  main.py
+# 单文件夹打包：pyinstaller -D -w --add-data "./view;./view"  main.py
+# macOS
+# 单文件打包：pyinstaller -F -w --add-data "./qt/execl/view:./view"  ./qt/execl/main.py
+# 单文件夹打包：pyinstaller -D -w --add-data "./qt/execl/view:./view"  ./qt/execl/main.py
 
 class ExcelWidget(QMainWindow):
     def __init__(self):
