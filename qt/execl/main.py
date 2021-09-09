@@ -130,13 +130,13 @@ class DictViewWidget(QMainWindow):
 
     def click_btn(self):
 
-        host = self.ui.le_host.getText()
-        port = self.ui.le_port.getText()
-        user = self.ui.le_user.getText()
-        passwd = self.ui.le_passwd.getText()
-        db = self.ui.le_db.getText()
+        host = self.ui.le_host.text()
+        port = self.ui.le_port.text()
+        user = self.ui.le_user.text()
+        passwd = self.ui.le_passwd.text()
+        db = self.ui.le_db.text()
 
-        run(host, port, user, passwd, db)
+        run(host, int(port), user, passwd, db)
 
 
 if __name__ == '__main__':
