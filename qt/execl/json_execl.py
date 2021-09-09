@@ -9,9 +9,14 @@ import xlwings as xw
 
 # 参考：https://www.bilibili.com/video/BV1wZ4y1G7Ur?from=search&seid=10558608980613499134&spm_id_from=333.337.0.0
 # https://github.com/horychen/emachinery/tree/pypi-tut-video
+
+
+# pyinstaller docs https://pyinstaller.readthedocs.io/en/stable/usage.html
+
 # windows
 # 单文件打包：pyinstaller -F -w --add-data "./view;./view"  main.py
 # 单文件夹打包：pyinstaller -D -w --add-data "./view;./view"  main.py
+#  pyinstaller -D -w --add-data "./view;./view" --add-data "./sql_util.py;./" --add-data "./execl_util.py;./" --hidden-import pymysql  main.py
 # macOS
 # 单文件打包：pyinstaller -F -w --add-data "./qt/execl/view:./view"  ./qt/execl/main.py
 # 单文件夹打包：pyinstaller -D -w --add-data "./qt/execl/view:./view"  ./qt/execl/main.py

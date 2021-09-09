@@ -1,0 +1,1 @@
+pyinstaller -D -w --add-data ".\qt\execl\view;.\view" --add-data ".\qt\execl\execl_util.py;.\"  --add-data ".\qt\execl\sql_util.py;.\" .\qt\execl\main.py
