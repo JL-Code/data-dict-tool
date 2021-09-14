@@ -2,7 +2,9 @@ import xlwings as xw
 import pandas as pd
 
 
-def build(data):
+# data 导出数据
+# filepath 文件存放地址
+def build(data, filepath):
     # 获取 xlwings 应用实例
     app = xw.App(visible=True, add_book=False)
 
@@ -14,7 +16,16 @@ def build(data):
     catalog = wb.sheets.add(catalog_name)
     catalog_a1_address = catalog.range('A1').get_address()
 
+    # 填充 catalog sheet 内容
+    catalogDf = pd.DataFrame(data[catalog_name])
+    catalogDf.set_index(["序号"], inplace=True)
+    catalog.range('A1').value = catalogDf
+    catalog.autofit()
+
     for key in data:
+        if key == '目录':
+            continue
+
         df = pd.DataFrame(data[key])
         df.set_index(["序号"], inplace=True)
 
@@ -26,3 +37,10 @@ def build(data):
         # sheet 工作表中所有列自动适应内容宽度
         curr_sheet.autofit()
         prev = key
+
+    # 保存文件
+    wb.save(filepath)
+    # 关闭工作簿
+    wb.close()
+    # 退出Excel
+    app.quit()

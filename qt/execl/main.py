@@ -3,7 +3,7 @@ from sql_util import create_db_conn, get_dataset
 from execl_util import build
 import sys
 import pkg_resources
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 
 
@@ -12,14 +12,15 @@ def run(host='192.168.1.32',
         user='dev',
         password='Cqhz.2020',
         db='information_schema',
-        charset='utf8'):
+        charset='utf8',
+        filepath=""):
     result = create_db_conn(host, port, user, password, db, charset)
     conn = result[0]
     cursor = result[1]
 
     try:
         data = get_table_metadata(cursor)
-        build(data)
+        build(data, filepath)
     except BaseException as e:
         print("exception:", e)
     finally:
@@ -83,8 +84,7 @@ def get_table_metadata(cursor):
 
 
 def convert(tables, columns):
-    table_metadata = {}
-
+    table_metadata = {'目录': tables}
     titles = list(map(lambda m: m['中文名称'], tables))
 
     for title in titles:
@@ -127,16 +127,42 @@ class DictViewWidget(QMainWindow):
         self.ui.le_db.setText('information_schema')
 
         self.ui.pushButton.clicked.connect(self.click_btn)
+        self.ui.chooseFile.clicked.connect(self.get_save_path)
 
     def click_btn(self):
+        # 获取文件存储路径
+        # filepath = self.browse()
 
         host = self.ui.le_host.text()
         port = self.ui.le_port.text()
         user = self.ui.le_user.text()
         passwd = self.ui.le_passwd.text()
         db = self.ui.le_db.text()
+        filepath = self.ui.le_file.text()
+        charset = 'utf8'
 
-        run(host, int(port), user, passwd, db)
+        run(host, int(port), user, passwd, db, charset, filepath)
+
+    # 通过 QFileDialog.getSaveFileName 获取保存路径
+    def get_save_path(self):
+        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "所有文件 (*);")
+        self.ui.le_file.setText(directory[0])
+
+    # 文件浏览函数
+    # 返回一个文件路径
+    def browse(self):
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        # 过滤文件
+        dialog.setNameFilter("Text files (*.xlxs)")
+        dialog.setViewMode(QFileDialog.Detail)
+        file_names = []
+        if dialog.exec():
+            file_names = dialog.selectedFiles()
+        dialog.close()
+
+        if len(file_names) > 0:
+            self.ui.le_file.setText(file_names[0])
 
 
 if __name__ == '__main__':
