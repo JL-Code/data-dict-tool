@@ -145,7 +145,7 @@ class DictViewWidget(QMainWindow):
 
     # 通过 QFileDialog.getSaveFileName 获取保存路径
     def get_save_path(self):
-        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "所有文件 (*);")
+        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "Excel Files (*.xlsx);;Excel Files (*.xls)")
         self.ui.le_file.setText(directory[0])
 
     # 文件浏览函数

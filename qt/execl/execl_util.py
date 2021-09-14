@@ -27,6 +27,7 @@ def build(data, filepath):
             continue
 
         df = pd.DataFrame(data[key])
+
         df.set_index(["序号"], inplace=True)
 
         curr_sheet = wb.sheets.add(key, after=prev)
