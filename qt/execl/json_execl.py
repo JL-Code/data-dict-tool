@@ -80,7 +80,12 @@ class ExcelWidget(QMainWindow):
                 # sheet 工作表中所有列自动适应内容宽度
                 curr_sheet.autofit()
                 prev = key
-
+            # 保存文件
+            wb.save("/Users/codeme/Downloads/test.xlsx")
+            # 关闭工作簿
+            wb.close()
+            # 退出Excel
+            app.quit()
         # try:
         #     fileName = QFileDialog.getOpenFileName(self,
         #                                            "Open Image", "C:\\Users\\codeme",

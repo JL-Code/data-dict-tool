@@ -1,47 +1,57 @@
 import xlwings as xw
 import pandas as pd
+import logging
+
+"""
+    data 导出数据
+    filepath 文件存放地址
+"""
 
 
-# data 导出数据
-# filepath 文件存放地址
-def build(data, filepath):
-    # 获取 xlwings 应用实例
-    app = xw.App(visible=True, add_book=False)
+def build(data, filepath, spec):
+    logging.debug("filepath:", filepath)
+    try:
+        # 获取 xlwings 应用实例 , 使用 with 确保 Execl 实例每次都被正常清理
+        with xw.App(visible=False, add_book=False, spec=spec) as app:
+            print(app.books)
+            # 添加一个工作簿
+            # wb = app.books[filepath]
+            # wb = app.books.open(filepath)
+            wb = app.books.add()
+            catalog_name = '目录'
+            prev = catalog_name
+            catalog = wb.sheets.add(catalog_name)
+            catalog_a1_address = catalog.range('A1').get_address()
+            # 填充 catalog sheet 内容
+            catalog_df = pd.DataFrame(data[catalog_name])
+            catalog_df.set_index(["序号"], inplace=True)
+            catalog.range('A1').value = catalog_df
+            catalog.autofit()
 
-    # 添加一个工作簿
-    wb = app.books.add()
+            for key in data:
+                if key == '目录':
+                    continue
 
-    catalog_name = '目录'
-    prev = catalog_name
-    catalog = wb.sheets.add(catalog_name)
-    catalog_a1_address = 'D:\\Workspace\\python-execl\\qt\\execl\\目录!$A$1'
-    # catalog.range('A1').get_address()
-    # 填充 catalog sheet 内容
-    catalog_df = pd.DataFrame(data[catalog_name])
-    catalog_df.set_index(["序号"], inplace=True)
-    catalog.range('A1').value = catalog_df
-    catalog.autofit()
+                df = pd.DataFrame(data[key])
 
-    for key in data:
-        if key == '目录':
-            continue
+                df.set_index(["序号"], inplace=True)
 
-        df = pd.DataFrame(data[key])
+                curr_sheet = wb.sheets.add(key, after=prev)
 
-        df.set_index(["序号"], inplace=True)
+                curr_sheet.range('A1').add_hyperlink(catalog_a1_address, text_to_display="返回目录",
+                                                     screen_tip=catalog_a1_address)
+                curr_sheet.range('A2').value = df
+                # sheet 工作表中所有列自动适应内容宽度
+                curr_sheet.autofit()
+                prev = key
 
-        curr_sheet = wb.sheets.add(key, after=prev)
+            """问题描述: https://github.com/xlwings/xlwings/issues/957"""
+            """解决方案: https://github.com/xlwings/xlwings/pull/1372"""
+            wb.save(filepath)
 
-        curr_sheet.range('A1').add_hyperlink(catalog_a1_address, text_to_display="返回目录",
-                                             screen_tip=catalog_a1_address)
-        curr_sheet.range('A2').value = df
-        # sheet 工作表中所有列自动适应内容宽度
-        curr_sheet.autofit()
-        prev = key
-
-    # 保存文件
-    wb.save(filepath)
-    # 关闭工作簿
-    wb.close()
-    # 退出Excel
-    app.quit()
+    except IOError as e:
+        logging.debug("IOError:", e)
+        print(e)
+    except OSError as e:
+        logging.error("OSError:", e)
+        print(e)

@@ -2,29 +2,10 @@ import functools
 from sql_util import create_db_conn, get_dataset
 from execl_util import build
 import sys
+import logging
 import pkg_resources
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5.uic import loadUi
-
-
-def run(host='192.168.1.32',
-        port=3306,
-        user='dev',
-        password='Cqhz.2020',
-        db='information_schema',
-        charset='utf8',
-        filepath=""):
-    result = create_db_conn(host, port, user, password, db, charset)
-    conn = result[0]
-    cursor = result[1]
-
-    try:
-        data = get_table_metadata(cursor)
-        build(data, filepath)
-    except BaseException as e:
-        print("exception:", e)
-    finally:
-        conn.close()
 
 
 def get_table_metadata(cursor):
@@ -41,7 +22,7 @@ def get_table_metadata(cursor):
     FROM information_schema.TABLES,
          (SELECT @serial_num := 0) serial_num
     WHERE TABLE_SCHEMA = 'highzap_ebs_0715'
-      AND TABLE_NAME LIKE 'ebs_%'
+      AND TABLE_NAME LIKE 'ebs_year_subject'
     order by TABLE_NAME;"""
 
     columns_sql = """SELECT c.ORDINAL_POSITION         AS '序号',
@@ -125,6 +106,7 @@ class DictViewWidget(QMainWindow):
         self.ui.le_user.setText('dev')
         self.ui.le_passwd.setText('Cqhz.2020')
         self.ui.le_db.setText('information_schema')
+        self.ui.le_spec.setText('wpsoffice')
 
         self.ui.pushButton.clicked.connect(self.click_btn)
         self.ui.chooseFile.clicked.connect(self.get_save_path)
@@ -139,33 +121,44 @@ class DictViewWidget(QMainWindow):
         passwd = self.ui.le_passwd.text()
         db = self.ui.le_db.text()
         filepath = self.ui.le_file.text()
+        spec = self.ui.le_spec.text()
         charset = 'utf8'
 
-        run(host, int(port), user, passwd, db, charset, filepath)
+        run(host, int(port), user, passwd, db, charset, filepath, spec)
 
     # 通过 QFileDialog.getSaveFileName 获取保存路径
     def get_save_path(self):
-        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "Excel Files (*.xlsx);;Excel Files (*.xls)")
+        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "Excel Files (*.xls);;Excel Files (*.xlsx)")
         self.ui.le_file.setText(directory[0])
 
-    # 文件浏览函数
-    # 返回一个文件路径
-    def browse(self):
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.AnyFile)
-        # 过滤文件
-        dialog.setNameFilter("Text files (*.xlxs)")
-        dialog.setViewMode(QFileDialog.Detail)
-        file_names = []
-        if dialog.exec():
-            file_names = dialog.selectedFiles()
-        dialog.close()
 
-        if len(file_names) > 0:
-            self.ui.le_file.setText(file_names[0])
+def run(host='192.168.1.32',
+        port=3306,
+        user='dev',
+        password='Cqhz.2020',
+        db='information_schema',
+        charset='utf8',
+        filepath="",
+        spec='wpsoffice'):
+    result = create_db_conn(host, port, user, password, db, charset)
+    conn = result[0]
+    cursor = result[1]
+
+    try:
+        data = get_table_metadata(cursor)
+        build(data, filepath, spec)
+        print("生成成功...")
+    except BaseException as e:
+        print("exception:", e)
+        logging.error(e)
+    finally:
+        conn.close()
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.DEBUG,  # 定义输出到文件的日志级别
+        filename="app.log")  # log文件名  # 写入模式“w”或“a”
     app = QApplication(sys.argv)
     widget = DictViewWidget()
     widget.show()
