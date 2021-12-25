@@ -9,7 +9,7 @@ from PyQt5.uic import loadUi
 
 
 def get_table_metadata(cursor):
-    tables_sql = """SELECT @serial_num := @serial_num + 1
+  tables_sql = """SELECT @serial_num := @serial_num + 1
                             AS '序号',
            upper
                (TABLE_NAME) as '表名称',
@@ -25,7 +25,7 @@ def get_table_metadata(cursor):
       AND TABLE_NAME LIKE 'ebs_year_subject'
     order by TABLE_NAME;"""
 
-    columns_sql = """SELECT c.ORDINAL_POSITION         AS '序号',
+  columns_sql = """SELECT c.ORDINAL_POSITION         AS '序号',
            c.TABLE_NAME                   AS '数据表',
            t.TABLE_COMMENT                AS '数据表中文名',
            upper
@@ -58,78 +58,78 @@ def get_table_metadata(cursor):
            and c.TABLE_NAME like 'ebs_%'
     ORDER BY c.TABLE_NAME;"""
 
-    tables = get_dataset(cursor, tables_sql)
-    columns = get_dataset(cursor, columns_sql)
+  tables = get_dataset(cursor, tables_sql)
+  columns = get_dataset(cursor, columns_sql)
 
-    return convert(tables, columns)
+  return convert(tables, columns)
 
 
 def convert(tables, columns):
-    table_metadata = {'目录': tables}
-    titles = list(map(lambda m: m['中文名称'], tables))
+  table_metadata = {'目录': tables}
+  titles = list(map(lambda m: m['中文名称'], tables))
 
-    for title in titles:
-        # 提取对应表的字段列
-        items = list(filter(lambda c: c['数据表中文名'] == title, columns))
+  for title in titles:
+    # 提取对应表的字段列
+    items = list(filter(lambda c: c['数据表中文名'] == title, columns))
 
-        # 按照字段在表中的序号排序
-        items = sorted(items, key=functools.cmp_to_key(lambda first, second: first['序号'] - second['序号']))
+    # 按照字段在表中的序号排序
+    items = sorted(items, key=functools.cmp_to_key(lambda first, second: first['序号'] - second['序号']))
 
-        # 移除数据表、数据表中文名字段
-        for item in items:
-            del item['数据表']
-            del item['数据表中文名']
-            # 从 list 中移除 item
-            columns.remove(item)
+    # 移除数据表、数据表中文名字段
+    for item in items:
+      del item['数据表']
+      del item['数据表中文名']
+      # 从 list 中移除 item
+      columns.remove(item)
 
-        table_metadata[title] = items
+    table_metadata[title] = items
 
-    return table_metadata
+  return table_metadata
 
 
 class DictViewWidget(QMainWindow):
-    def __init__(self):
-        QMainWindow.__init__(self)
+  def __init__(self):
+    QMainWindow.__init__(self)
 
-        path = "view/dict_view.ui"
-        filepath = pkg_resources.resource_filename(__name__, path)
-        try:
-            self.ui = loadUi(filepath, self)
-        except ModuleNotFoundError as e:
-            print(str(e))
-        except Exception as e:
-            raise e
+    path = "view/dict_view.ui"
+    filepath = pkg_resources.resource_filename(__name__, path)
+    try:
+      self.ui = loadUi(filepath, self)
+    except ModuleNotFoundError as e:
+      print(str(e))
+    except Exception as e:
+      raise e
 
-        self.ui.setWindowTitle("数据字典工具")
-        self.ui.le_host.setText('192.168.1.32')
-        self.ui.le_port.setText('3306')
-        self.ui.le_user.setText('dev')
-        self.ui.le_passwd.setText('Cqhz.2020')
-        self.ui.le_db.setText('information_schema')
-        self.ui.le_spec.setText('wpsoffice')
+    self.ui.setWindowTitle("数据字典工具")
+    self.ui.le_host.setText('192.168.1.32')
+    self.ui.le_port.setText('3306')
+    self.ui.le_user.setText('dev')
+    self.ui.le_passwd.setText('Cqhz.2020')
+    self.ui.le_db.setText('information_schema')
+    self.ui.le_spec.setText('wpsoffice')
 
-        self.ui.pushButton.clicked.connect(self.click_btn)
-        self.ui.chooseFile.clicked.connect(self.get_save_path)
+    self.ui.pushButton.clicked.connect(self.click_btn)
+    self.ui.chooseFile.clicked.connect(self.get_save_path)
 
-    def click_btn(self):
-        # 获取文件存储路径
-        # filepath = self.browse()
+  def click_btn(self):
+    # 获取文件存储路径
+    # filepath = self.browse()
 
-        host = self.ui.le_host.text()
-        port = self.ui.le_port.text()
-        user = self.ui.le_user.text()
-        passwd = self.ui.le_passwd.text()
-        db = self.ui.le_db.text()
-        filepath = self.ui.le_file.text()
-        spec = self.ui.le_spec.text()
-        charset = 'utf8'
+    host = self.ui.le_host.text()
+    port = self.ui.le_port.text()
+    user = self.ui.le_user.text()
+    passwd = self.ui.le_passwd.text()
+    db = self.ui.le_db.text()
+    filepath = self.ui.le_file.text()
+    spec = self.ui.le_spec.text()
+    charset = 'utf8'
 
-        run(host, int(port), user, passwd, db, charset, filepath, spec)
+    run(host, int(port), user, passwd, db, charset, filepath, spec)
 
-    # 通过 QFileDialog.getSaveFileName 获取保存路径
-    def get_save_path(self):
-        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "Excel Files (*.xls);;Excel Files (*.xlsx)")
-        self.ui.le_file.setText(directory[0])
+  # 通过 QFileDialog.getSaveFileName 获取保存路径
+  def get_save_path(self):
+    directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "Excel Files (*.xls);;Excel Files (*.xlsx)")
+    self.ui.le_file.setText(directory[0])
 
 
 def run(host='192.168.1.32',
@@ -140,26 +140,26 @@ def run(host='192.168.1.32',
         charset='utf8',
         filepath="",
         spec='wpsoffice'):
-    result = create_db_conn(host, port, user, password, db, charset)
-    conn = result[0]
-    cursor = result[1]
+  result = create_db_conn(host, port, user, password, db, charset)
+  conn = result[0]
+  cursor = result[1]
 
-    try:
-        data = get_table_metadata(cursor)
-        build(data, filepath, spec)
-        print("生成成功...")
-    except BaseException as e:
-        print("exception:", e)
-        logging.error(e)
-    finally:
-        conn.close()
+  try:
+    data = get_table_metadata(cursor)
+    build(data, filepath, spec)
+    print("生成成功...")
+  except BaseException as e:
+    print("exception:", e)
+    logging.error(e)
+  finally:
+    conn.close()
 
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.DEBUG,  # 定义输出到文件的日志级别
-        filename="app.log")  # log文件名  # 写入模式“w”或“a”
-    app = QApplication(sys.argv)
-    widget = DictViewWidget()
-    widget.show()
-    sys.exit(app.exec_())
+  logging.basicConfig(
+    level=logging.DEBUG,  # 定义输出到文件的日志级别
+    filename="app.log")  # log文件名  # 写入模式“w”或“a”
+  app = QApplication(sys.argv)
+  widget = DictViewWidget()
+  widget.show()
+  sys.exit(app.exec_())
