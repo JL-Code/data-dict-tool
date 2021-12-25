@@ -2,7 +2,7 @@ import functools
 import shutil
 
 from sql_util import create_db_conn, get_dataset
-from execl_util import build
+from execl_util_openpyxl import build
 import sys
 import logging
 import pkg_resources
@@ -97,7 +97,7 @@ class DictViewWidget(QMainWindow):
         self.ui.le_passwd.setText('rootCqhz.2020')
         self.ui.le_file.setText('/Users/codeme/Downloads/HJ费用预算系统数据字典.xlsx')
         self.ui.le_db.setText('highzap_jerp_basic_app_integrated')
-        self.ui.le_spec.setText('Microsoft Excel')
+        self.ui.le_spec.setText('Microsoft Excel')  # Microsoft Excel | wpsoffice
 
         self.ui.pushButton.clicked.connect(self.click_btn)
         self.ui.chooseFile.clicked.connect(self.get_save_path)
@@ -129,15 +129,15 @@ def run(host='192.168.1.32',
         password='rootCqhz.2020',
         db='information_schema',
         charset='utf8',
-        filepath="",
-        spec='wpsoffice'):
+        filepath="Microsoft Excel",
+        spec=''):
     result = create_db_conn(host, port, user, password, db, charset)
     conn = result[0]
     cursor = result[1]
 
     try:
         data = get_table_metadata(cursor, db, 'ebs_budget_department')
-        build(data, filepath, spec)
+        build(data, filepath)
         print("生成成功...")
         # macOS 下，不能直接将文件保存到用户目标目录，只能采取 copy
         # 从 ~/Library/Containers/com.microsoft.Excel/Data/Documents copy to 目标目录
