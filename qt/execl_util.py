@@ -13,7 +13,7 @@ def build(data, filepath, spec):
     try:
         # 获取 xlwings 应用实例 , 使用 with 确保 Execl 实例每次都被正常清理
         with xw.App(visible=False, add_book=False, spec=spec) as app:
-            print(app.books)
+            print("app.books", app.books)
             # 添加一个工作簿
             # wb = app.books[filepath]
             # wb = app.books.open(filepath)
@@ -31,13 +31,9 @@ def build(data, filepath, spec):
             for key in data:
                 if key == '目录':
                     continue
-
                 df = pd.DataFrame(data[key])
-
                 df.set_index(["序号"], inplace=True)
-
                 curr_sheet = wb.sheets.add(key, after=prev)
-
                 curr_sheet.range('A1').add_hyperlink(catalog_a1_address, text_to_display="返回目录",
                                                      screen_tip=catalog_a1_address)
                 curr_sheet.range('A2').value = df
@@ -51,7 +47,4 @@ def build(data, filepath, spec):
 
     except IOError as e:
         logging.debug("IOError:", e)
-        print(e)
-    except OSError as e:
-        logging.error("OSError:", e)
-        print(e)
+        print("IOError:", e)
