@@ -1,4 +1,6 @@
 import functools
+import shutil
+
 from sql_util import create_db_conn, get_dataset
 from execl_util import build
 import sys
@@ -134,9 +136,13 @@ def run(host='192.168.1.32',
     cursor = result[1]
 
     try:
-        data = get_table_metadata(cursor, db, 'ebs_')
+        data = get_table_metadata(cursor, db, 'ebs_budget_department')
         build(data, filepath, spec)
         print("生成成功...")
+        # macOS 下，不能直接将文件保存到用户目标目录，只能采取 copy
+        # 从 ~/Library/Containers/com.microsoft.Excel/Data/Documents copy to 目标目录
+        sourcePath = f"/Users/codeme/Library/Containers/com.microsoft.Excel/Data/Documents/磁盘{filepath.replace('/', ':')}"
+        shutil.copy(sourcePath, filepath)
     except BaseException as e:
         print("exception:", e)
         logging.error(e)
@@ -146,7 +152,7 @@ def run(host='192.168.1.32',
 
 if __name__ == '__main__':
     logging.basicConfig(
-        level=logging.DEBUG,  # 定义输出到文件的日志级别
+        level=logging.NOTSET,  # 定义输出到文件的日志级别
         filename="app.log")  # log文件名  # 写入模式“w”或“a”
     app = QApplication(sys.argv)
     widget = DictViewWidget()
