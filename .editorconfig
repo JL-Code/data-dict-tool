@@ -3,7 +3,7 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 2
+indent_size = 4
 indent_style = space
 insert_final_newline = false
 max_line_length = 120
@@ -50,7 +50,7 @@ ij_xml_space_inside_empty_tag = false
 ij_xml_text_wrap = normal
 
 [{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.stylelintrc,bowerrc,jest.config}]
-# indent_size = 2
+indent_size = 2
 # ij_json_keep_blank_lines_in_code = 0
 # ij_json_keep_indents_on_empty_lines = false
 # ij_json_keep_line_breaks = true
