@@ -1,0 +1,23 @@
+{
+  "name": "data-dict-tool",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.py",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JL-Code/python-execl.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JL-Code/python-execl/issues"
+  },
+  "homepage": "https://github.com/JL-Code/python-execl#readme"
+}
