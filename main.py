@@ -94,7 +94,7 @@ class DictViewWidget(QMainWindow):
         self.ui.le_passwd.setText('rootCqhz.2020')
         self.ui.le_file.setText('/Users/codeme/Downloads/HJ费用预算系统数据字典.xlsx')
         self.ui.le_db.setText('highzap_jerp_basic_app_integrated')
-        self.ui.le_spec.setText('Microsoft Excel')  # Microsoft Excel | wpsoffice
+        self.ui.le_prefix.setText('ebs_')
 
         self.ui.pushButton.clicked.connect(self.click_btn)
         self.ui.chooseFile.clicked.connect(self.get_save_path)
@@ -109,10 +109,10 @@ class DictViewWidget(QMainWindow):
         passwd = self.ui.le_passwd.text()
         db = self.ui.le_db.text()
         filepath = self.ui.le_file.text()
-        spec = self.ui.le_spec.text()
+        prefix = self.ui.le_prefix.text()
         charset = 'utf8'
 
-        run(host, int(port), user, passwd, db, charset, filepath, spec)
+        run(host, int(port), user, passwd, db, charset, filepath, prefix)
 
     # 通过 QFileDialog.getSaveFileName 获取保存路径
     def get_save_path(self):
@@ -127,13 +127,13 @@ def run(host='192.168.1.32',
         db='information_schema',
         charset='utf8',
         filepath="Microsoft Excel",
-        spec=''):
+        prefix='ebs_'):
     result = create_db_conn(host, port, user, password, db, charset)
     conn = result[0]
     cursor = result[1]
 
     try:
-        data = get_table_metadata(cursor, db, 'ebs_budget_department')
+        data = get_table_metadata(cursor, db, prefix)
         build(data, filepath)
         print("生成成功", filepath)
     except BaseException as e:

@@ -10,13 +10,15 @@ import logging
 """
 
 
-# TODO: sheet 工作表中所有列自动适应内容宽度
-# TODO: sheet 序号文本居中
+# TODO: sheet 列自动适应内容宽度 【1】
+# TODO: sheet 序号文本居中 【3】
+# TODO: 清理生成的空白 sheet 【2】
+# TODO: 自定义表头样式 【3】
+# TODO: 生成返回目录超链接 【3】
 def build(data, filepath):
-    logging.debug("目标路径:", filepath)
+    logging.debug("目标路径: %s", filepath)
     try:
         wb = Workbook()
-        # book = app.books.add()
         catalog_name = "目录"
         print("创建 sheet ", catalog_name)
         ws_catalog = wb.create_sheet(title=catalog_name)
