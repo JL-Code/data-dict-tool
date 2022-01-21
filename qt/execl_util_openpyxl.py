@@ -68,7 +68,7 @@ def append_row_to_sheet(wb: Workbook, title, data, is_catalog: False, sheet_inde
             start_row_index += 1
     else:
         # 填充返回目录信息
-        cl_df = pd.DataFrame([{"序号": 0, "TEXT": '=HYPERLINK("#{}!A1", "{}")'.format(title, '返回目录')}])
+        cl_df = pd.DataFrame([{"序号": 0, "TEXT": '=HYPERLINK("#{}!A1", "{}")'.format('目录', '返回目录')}])
         cl_df_rows = dataframe_to_rows(cl_df, index=False, header=False)
         for row in cl_df_rows:
             add_column_width(row, column_widths)
