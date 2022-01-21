@@ -2,7 +2,7 @@
   "name": "data-dict-tool",
   "version": "0.0.2",
   "description": "",
-  "main": "main.py",
+  "main": "data_dict.py",
   "directories": {
     "doc": "doc",
     "test": "test"

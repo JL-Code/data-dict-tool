@@ -1,11 +1,16 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
 import functools
-import sys
 import logging
+import os.path
+import sys
+
 import pkg_resources
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5.uic import loadUi
-from qt.sql_util import create_db_conn, get_dataset
+
 from qt.execl_util_openpyxl import build
+from qt.sql_util import create_db_conn, get_dataset
 
 
 def get_table_metadata(cursor, table_schema, table_name_prefix):
@@ -144,9 +149,26 @@ def run(host='192.168.1.32',
 
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        level=logging.NOTSET,  # 定义输出到文件的日志级别
-        filename="app.log")  # log文件名  # 写入模式“w”或“a”
+    # https://docs.python.org/zh-cn/3.8/library/logging.html
+    # https://stackoverflow.com/questions/36046004/python-logging-working-on-windows-but-not-mac-os
+
+    log_format = "%(asctime)s %(levelname)s %(module)s - %(funcName)s: %(message)s"
+    date_fmt = "%m-%d %H:%M"
+
+    logging.basicConfig(filename=os.path.join(os.path.expanduser('~'), 'Library/logs', 'DataDict', 'app.log'),
+                        level=logging.INFO,
+                        filemode="a",
+                        format=log_format, datefmt=date_fmt)
+
+    stream_handler = logging.StreamHandler(sys.stderr)
+    stream_handler.setFormatter(logging.Formatter(fmt=log_format, datefmt=date_fmt))
+
+    logger = logging.getLogger("app")
+    logger.addHandler(stream_handler)
+
+    logger.info("information")
+    logger.warning("warning")
+
     app = QApplication(sys.argv)
     widget = DictViewWidget()
     widget.show()
