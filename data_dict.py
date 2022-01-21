@@ -155,7 +155,7 @@ if __name__ == '__main__':
     log_format = "%(asctime)s %(levelname)s %(module)s - %(funcName)s: %(message)s"
     date_fmt = "%m-%d %H:%M"
 
-    logging.basicConfig(filename=os.path.join(os.path.expanduser('~'), 'Library/logs', 'DataDict', 'app.log'),
+    logging.basicConfig(filename=os.path.join(os.path.expanduser('~'), 'Library/logs', 'data_dict.log'),
                         level=logging.INFO,
                         filemode="a",
                         format=log_format, datefmt=date_fmt)
