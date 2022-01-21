@@ -1,3 +1,6 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
 import logging
 
 import pandas as pd
@@ -34,7 +37,6 @@ def build(data, filepath):
 
     except IOError as e:
         logging.debug("IOError:", e)
-        print("IOError:", e)
 
 
 """单元格增加超链接 
@@ -114,10 +116,8 @@ def add_column_width(row, column_widths):
                     column_widths[i] = obtain_len(cell)
             else:
                 column_widths += [obtain_len(cell)]
-            print("cell", cell, column_widths[i])
     except TypeError as e:
         logging.debug("IOError:", e)
-        print("IOError:", e)
 
 
 def obtain_len(cell):

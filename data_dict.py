@@ -1,5 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
+
 import functools
 import logging
 import os.path
@@ -88,8 +89,9 @@ class DictViewWidget(QMainWindow):
         try:
             self.ui = loadUi(filepath, self)
         except ModuleNotFoundError as e:
-            print(str(e))
+            logging.error(e)
         except Exception as e:
+            logging.error(e)
             raise e
 
         self.ui.setWindowTitle("数据字典工具")
@@ -140,9 +142,7 @@ def run(host='192.168.1.32',
     try:
         data = get_table_metadata(cursor, db, prefix)
         build(data, filepath)
-        print("生成成功", filepath)
     except BaseException as e:
-        print("exception:", e)
         logging.error(e)
     finally:
         conn.close()

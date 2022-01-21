@@ -1,3 +1,6 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
 import xlwings as xw
 import pandas as pd
 import logging
@@ -18,11 +21,11 @@ def build(data, filepath, spec):
             # book = app.books.add()
             catalog_name = '目录'
             prev = catalog_name
-            print("创建 sheet ", catalog_name)
+            logging.debug("创建 sheet ", catalog_name)
             xw.sheets.add(catalog_name)
-            print("xw ", xw)
-            print("app ", app)
-            print("xw.sheets ", xw.sheets)
+            logging.debug("xw ", xw)
+            logging.debug("app ", app)
+            logging.debug("xw.sheets ", xw.sheets)
             catalog_a1_address = xw.sheets.active.range('A1').get_address()
             # 填充 catalog sheet 内容
             catalog_df = pd.DataFrame(data[catalog_name])
@@ -36,7 +39,7 @@ def build(data, filepath, spec):
                     continue
                 df = pd.DataFrame(data[key])
                 df.set_index(["序号"], inplace=True)
-                print("创建 sheet ", key)
+                logging.debug("创建 sheet ", key)
                 # book.sheets.add(key, after=prev)
                 xw.sheets.add(key, after=prev)
                 curr_sheet = xw.sheets.active
@@ -53,4 +56,3 @@ def build(data, filepath, spec):
 
     except IOError as e:
         logging.debug("IOError:", e)
-        print("IOError:", e)
