@@ -166,9 +166,6 @@ if __name__ == '__main__':
     logger = logging.getLogger("app")
     logger.addHandler(stream_handler)
 
-    logger.info("information")
-    logger.warning("warning")
-
     app = QApplication(sys.argv)
     widget = DictViewWidget()
     widget.show()
