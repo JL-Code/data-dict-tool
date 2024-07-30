@@ -21,7 +21,7 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 # TODO: 自定义表头样式 【3】
 # TODO: 生成返回目录超链接 【3】
 def build(data, filepath):
-    logging.debug("目标路径: %s", filepath)
+    logging.info("目标路径: %s", filepath)
     try:
         wb = Workbook()
         catalog_name = "目录"
@@ -29,14 +29,27 @@ def build(data, filepath):
         for key in data:
             if key == "目录":
                 continue
-            index = append_row_to_sheet(wb, key, data[key], False, index + 1)
+            # sheet 名称需要过滤特殊字符 '*', ':', '/', '\\', '?', '[', ']'
+            index = append_row_to_sheet(wb, replace_special_characters(key), data[key], False, index + 1)
         """问题描述: https://github.com/xlwings/xlwings/issues/957"""
         """解决方案: https://github.com/xlwings/xlwings/pull/1372"""
         # wb.remove_sheet(wb.active)  # fix: 删除默认生成的空白 Sheet
         wb.save(filepath)
 
     except IOError as e:
-        logging.debug("IOError:", e)
+        logging.error("build IOError:", e)
+
+
+def replace_special_characters(value):
+    # sheet 名称需要过滤特殊字符 '*', ':', '/', '\\', '?', '[', ']'
+    value = (value.replace('*', '')
+             .replace(':', '')
+             .replace('/', '')
+             .replace('\\', '')
+             .replace('?', '')
+             .replace('[', '')
+             .replace(']', ''))
+    return value
 
 
 """单元格增加超链接 
@@ -55,7 +68,7 @@ def append_row_to_sheet(wb: Workbook, title, data, is_catalog: False, sheet_inde
     :param sheet_index: sheet 索引
     """
     column_widths = []
-    logging.debug("创建 sheet %s", title)
+    logging.info("创建 sheet %s", title)
     worksheet = wb.create_sheet(title=title, index=sheet_index)
     df = pd.DataFrame(data)
     rows = dataframe_to_rows(df, index=False, header=True)
@@ -117,7 +130,7 @@ def add_column_width(row, column_widths):
             else:
                 column_widths += [obtain_len(cell)]
     except TypeError as e:
-        logging.debug("IOError:", e)
+        logging.error("add_column_width IOError:", e)
 
 
 def obtain_len(cell):

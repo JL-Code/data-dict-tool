@@ -1,8 +1,13 @@
 # 数据字典工具
 
 ## 环境准备
-
 * Python 3.9
+* [PDM 2.17.1](https://pdm-project.org/zh-cn/latest/usage/dependency/)
+
+## 安装依赖
+1. `pip install --upgrade setuptools`
+2. `pip install pyqt5`
+3. `pip install pymysql`
 
 ## 发布程序
 

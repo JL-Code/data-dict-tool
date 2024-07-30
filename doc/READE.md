@@ -2,6 +2,9 @@
 
 注意：电脑必须安装 execl 客户端，才可以操作表格。
 
+### 安装&运行
+
+
 ### xlwings 对象结构
 
 > xlwings — apps(App) — books（Book）— sheets（Sheet）— Range 模块 — 应用 — 工作簿 — 工作表 — 单元格

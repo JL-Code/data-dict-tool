@@ -17,7 +17,7 @@ from qt.sql_util import create_db_conn, get_dataset
 def get_table_metadata(cursor, table_schema, table_name_prefix):
     tables_sql = """SELECT @serial_num := @serial_num + 1 AS '序号',
            upper  (TABLE_NAME) as '表名称',
-           TABLE_COMMENT    as '中文名称',
+           IF(TRIM(TABLE_COMMENT) = '', TABLE_NAME, TABLE_COMMENT) AS '中文名称',
            ''               as '数据量',
            ''               as '平均日增量',
            ''               as '平均月增量',
@@ -31,7 +31,7 @@ def get_table_metadata(cursor, table_schema, table_name_prefix):
 
     columns_sql = """SELECT c.ORDINAL_POSITION                 AS '序号',
            c.TABLE_NAME                       AS '数据表',
-           t.TABLE_COMMENT                    AS '数据表中文名',
+           IF(TRIM(t.TABLE_COMMENT) = '', t.TABLE_NAME, t.TABLE_COMMENT)                    AS '数据表中文名',
            upper(c.COLUMN_NAME)               AS '字段名称',
            c.COLUMN_COMMENT                   AS '中文名称',
            upper(c.COLUMN_TYPE)               AS '字段类型',
@@ -95,13 +95,13 @@ class DictViewWidget(QMainWindow):
             raise e
 
         self.ui.setWindowTitle("数据字典工具")
-        self.ui.le_host.setText('192.168.1.32')
-        self.ui.le_port.setText('3308')
+        self.ui.le_host.setText('47.83.18.163')
+        self.ui.le_port.setText('3307')
         self.ui.le_user.setText('root')
-        self.ui.le_passwd.setText('rootCqhz.2020')
-        self.ui.le_file.setText('/Users/codeme/Downloads/HJ费用预算系统数据字典.xlsx')
-        self.ui.le_db.setText('highzap_jerp_basic_app_integrated')
-        self.ui.le_prefix.setText('ebs_')
+        self.ui.le_passwd.setText('12345678')
+        self.ui.le_file.setText('数据字典.xlsx')
+        self.ui.le_db.setText('bijiaqi_v2')
+        self.ui.le_prefix.setText('')
 
         self.ui.pushButton.clicked.connect(self.click_btn)
         self.ui.chooseFile.clicked.connect(self.get_save_path)
@@ -127,14 +127,27 @@ class DictViewWidget(QMainWindow):
         self.ui.le_file.setText(directory[0])
 
 
-def run(host='192.168.1.32',
-        port=3308,
+def run(host='47.83.18.163',
+        port=3307,
         user='root',
-        password='rootCqhz.2020',
+        password='12345678',
         db='information_schema',
         charset='utf8',
         filepath="Microsoft Excel",
-        prefix='ebs_'):
+        prefix=''):
+    """
+    运行数据库操作。
+    连接到数据库，获取表元数据，并根据这些元数据构建相应的文件。
+
+    :param host: 数据库主机地址，默认为'47.83.18.163'
+    :param port: 数据库端口，默认为3307
+    :param user: 数据库用户名，默认为'root'
+    :param password: 数据库密码，默认为'12345678'
+    :param db: 连接的数据库名称，默认为'information_schema'
+    :param charset: 数据库字符集，默认为'utf8'
+    :param filepath: 导出数据的目标文件路径，默认为"Microsoft Excel"
+    :param prefix: 表名前缀，默认为空字符串
+    """
     result = create_db_conn(host, port, user, password, db, charset)
     conn = result[0]
     cursor = result[1]
@@ -142,8 +155,9 @@ def run(host='192.168.1.32',
     try:
         data = get_table_metadata(cursor, db, prefix)
         build(data, filepath)
+        logging.info("build success")
     except BaseException as e:
-        logging.error(e)
+        logging.error("run", e)
     finally:
         conn.close()
 
@@ -154,10 +168,11 @@ if __name__ == '__main__':
 
     log_format = "%(asctime)s %(levelname)s %(module)s - %(funcName)s: %(message)s"
     date_fmt = "%m-%d %H:%M"
-
-    logging.basicConfig(filename=os.path.join(os.path.expanduser('~'), 'Library/logs', 'data_dict.log'),
+    # os.path.join(os.path.expanduser('~'), 'logs', 'data_dict.log'
+    logging.basicConfig(filename="data_dict.log",
                         level=logging.INFO,
                         filemode="a",
+                        encoding="utf-8",
                         format=log_format, datefmt=date_fmt)
 
     stream_handler = logging.StreamHandler(sys.stderr)
