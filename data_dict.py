@@ -3,10 +3,9 @@
 
 import functools
 import logging
-import os.path
 import sys
+from pathlib import Path
 
-import pkg_resources
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 
@@ -58,20 +57,25 @@ def get_table_metadata(cursor, table_schema, table_name_prefix):
 
 
 def convert(tables, columns):
-    table_metadata = {'目录': tables}
-    titles = list(map(lambda m: m['中文名称'], tables))
+    table_metadata = {"目录": tables}
+    titles = list(map(lambda m: m["中文名称"], tables))
 
     for title in titles:
         # 提取对应表的字段列
-        items = list(filter(lambda c: c['数据表中文名'] == title, columns))
+        items = list(filter(lambda c: c["数据表中文名"] == title, columns))
 
         # 按照字段在表中的序号排序
-        items = sorted(items, key=functools.cmp_to_key(lambda first, second: first['序号'] - second['序号']))
+        items = sorted(
+            items,
+            key=functools.cmp_to_key(
+                lambda first, second: first["序号"] - second["序号"]
+            ),
+        )
 
         # 移除数据表、数据表中文名字段
         for item in items:
-            del item['数据表']
-            del item['数据表中文名']
+            del item["数据表"]
+            del item["数据表中文名"]
             # 从 list 中移除 item
             columns.remove(item)
 
@@ -84,10 +88,9 @@ class DictViewWidget(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
-        path = "qt/view/dict_view.ui"
-        filepath = pkg_resources.resource_filename(__name__, path)
+        filepath = Path(__file__).resolve().parent / "qt" / "view" / "dict_view.ui"
         try:
-            self.ui = loadUi(filepath, self)
+            self.ui = loadUi(str(filepath), self)
         except ModuleNotFoundError as e:
             logging.error(e)
         except Exception as e:
@@ -95,13 +98,13 @@ class DictViewWidget(QMainWindow):
             raise e
 
         self.ui.setWindowTitle("数据字典工具")
-        self.ui.le_host.setText('47.83.18.163')
-        self.ui.le_port.setText('3307')
-        self.ui.le_user.setText('root')
-        self.ui.le_passwd.setText('12345678')
-        self.ui.le_file.setText('数据字典.xlsx')
-        self.ui.le_db.setText('bijiaqi_v2')
-        self.ui.le_prefix.setText('')
+        self.ui.le_host.setText("47.83.18.163")
+        self.ui.le_port.setText("3307")
+        self.ui.le_user.setText("root")
+        self.ui.le_passwd.setText("12345678")
+        self.ui.le_file.setText("数据字典.xlsx")
+        self.ui.le_db.setText("bijiaqi_v2")
+        self.ui.le_prefix.setText("")
 
         self.ui.pushButton.clicked.connect(self.click_btn)
         self.ui.chooseFile.clicked.connect(self.get_save_path)
@@ -117,24 +120,28 @@ class DictViewWidget(QMainWindow):
         db = self.ui.le_db.text()
         filepath = self.ui.le_file.text()
         prefix = self.ui.le_prefix.text()
-        charset = 'utf8'
+        charset = "utf8"
 
         run(host, int(port), user, passwd, db, charset, filepath, prefix)
 
     # 通过 QFileDialog.getSaveFileName 获取保存路径
     def get_save_path(self):
-        directory = QFileDialog.getSaveFileName(self, "文件保存路径", "./", "Excel Files (*.xls);;Excel Files (*.xlsx)")
+        directory = QFileDialog.getSaveFileName(
+            self, "文件保存路径", "./", "Excel Files (*.xls);;Excel Files (*.xlsx)"
+        )
         self.ui.le_file.setText(directory[0])
 
 
-def run(host='47.83.18.163',
-        port=3307,
-        user='root',
-        password='12345678',
-        db='information_schema',
-        charset='utf8',
-        filepath="Microsoft Excel",
-        prefix=''):
+def run(
+    host="47.83.18.163",
+    port=3307,
+    user="root",
+    password="12345678",
+    db="information_schema",
+    charset="utf8",
+    filepath="Microsoft Excel",
+    prefix="",
+):
     """
     运行数据库操作。
     连接到数据库，获取表元数据，并根据这些元数据构建相应的文件。
@@ -162,18 +169,21 @@ def run(host='47.83.18.163',
         conn.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # https://docs.python.org/zh-cn/3.8/library/logging.html
     # https://stackoverflow.com/questions/36046004/python-logging-working-on-windows-but-not-mac-os
 
     log_format = "%(asctime)s %(levelname)s %(module)s - %(funcName)s: %(message)s"
     date_fmt = "%m-%d %H:%M"
     # os.path.join(os.path.expanduser('~'), 'logs', 'data_dict.log'
-    logging.basicConfig(filename="data_dict.log",
-                        level=logging.INFO,
-                        filemode="a",
-                        encoding="utf-8",
-                        format=log_format, datefmt=date_fmt)
+    logging.basicConfig(
+        filename="data_dict.log",
+        level=logging.INFO,
+        filemode="a",
+        encoding="utf-8",
+        format=log_format,
+        datefmt=date_fmt,
+    )
 
     stream_handler = logging.StreamHandler(sys.stderr)
     stream_handler.setFormatter(logging.Formatter(fmt=log_format, datefmt=date_fmt))

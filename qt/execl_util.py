@@ -19,23 +19,23 @@ def build(data, filepath, spec):
             # 如果为True, 让Excel程序变为最前台的应用，并且把焦点从Python切换到Excel
             app.activate(steal_focus=True)
             # book = app.books.add()
-            catalog_name = '目录'
+            catalog_name = "目录"
             prev = catalog_name
             logging.debug("创建 sheet ", catalog_name)
             xw.sheets.add(catalog_name)
             logging.debug("xw ", xw)
             logging.debug("app ", app)
             logging.debug("xw.sheets ", xw.sheets)
-            catalog_a1_address = xw.sheets.active.range('A1').get_address()
+            catalog_a1_address = xw.sheets.active.range("A1").get_address()
             # 填充 catalog sheet 内容
             catalog_df = pd.DataFrame(data[catalog_name])
             catalog_df.set_index(["序号"], inplace=True)
 
-            xw.sheets.active.range('A1').value = catalog_df
+            xw.sheets.active.range("A1").value = catalog_df
             xw.sheets.active.autofit()
 
             for key in data:
-                if key == '目录':
+                if key == "目录":
                     continue
                 df = pd.DataFrame(data[key])
                 df.set_index(["序号"], inplace=True)
@@ -43,9 +43,12 @@ def build(data, filepath, spec):
                 # book.sheets.add(key, after=prev)
                 xw.sheets.add(key, after=prev)
                 curr_sheet = xw.sheets.active
-                curr_sheet.range('A1').add_hyperlink(catalog_a1_address, text_to_display="返回目录",
-                                                     screen_tip=catalog_a1_address)
-                curr_sheet.range('A2').value = df
+                curr_sheet.range("A1").add_hyperlink(
+                    catalog_a1_address,
+                    text_to_display="返回目录",
+                    screen_tip=catalog_a1_address,
+                )
+                curr_sheet.range("A2").value = df
                 # sheet 工作表中所有列自动适应内容宽度
                 curr_sheet.autofit()
                 prev = key

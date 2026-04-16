@@ -1,5 +1,5 @@
 import sys
-import pkg_resources
+from pathlib import Path
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 import pandas as pd
@@ -27,10 +27,9 @@ class ExcelWidget(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
-        path = "view/execl.ui"
-        filepath = pkg_resources.resource_filename(__name__, path)
+        filepath = Path(__file__).resolve().parent / "view" / "execl.ui"
         try:
-            self.ui = loadUi(filepath, self)
+            self.ui = loadUi(str(filepath), self)
         except ModuleNotFoundError as e:
             print(str(e))
         except Exception as e:
