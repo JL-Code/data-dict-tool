@@ -98,12 +98,12 @@ class DictViewWidget(QMainWindow):
             raise e
 
         self.ui.setWindowTitle("数据字典工具")
-        self.ui.le_host.setText("47.83.18.163")
+        self.ui.le_host.setText("192.168.1.30")
         self.ui.le_port.setText("3307")
         self.ui.le_user.setText("root")
         self.ui.le_passwd.setText("12345678")
         self.ui.le_file.setText("数据字典.xlsx")
-        self.ui.le_db.setText("bijiaqi_v2")
+        self.ui.le_db.setText("qsq")
         self.ui.le_prefix.setText("")
 
         self.ui.pushButton.clicked.connect(self.click_btn)
@@ -133,7 +133,7 @@ class DictViewWidget(QMainWindow):
 
 
 def run(
-    host="47.83.18.163",
+    host="192.168.1.30",
     port=3307,
     user="root",
     password="12345678",
